@@ -7,6 +7,7 @@
 
 #include "CAENHVWrapper.h"
 #include "GRSIVoltageControl.h"
+#include "CrateCommands.h"
 
 #define MAX_PASSWORD_LENGTH 20
 

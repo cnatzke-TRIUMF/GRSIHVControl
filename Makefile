@@ -28,9 +28,9 @@ LIBS=		-lcaenhvwrapper -lncurses -lpthread -ldl -lm
 
 INCLUDEDIR=	-I./$(GLOBALDIR) -I./include/
 
-SOURCES=	$(GLOBALDIR)GRSIVoltageControl.c $(GLOBALDIR)CrateCommands.c
+SOURCES=	$(GLOBALDIR)GRSIVoltageControl.c $(GLOBALDIR)CrateCommands.c $(GLOBALDIR)CommandParser.c
 
-OBJECTS=	$(GLOBALDIR)GRSIVoltageControl.o $(GLOBALDIR)CrateCommands.o
+OBJECTS=	$(GLOBALDIR)GRSIVoltageControl.o $(GLOBALDIR)CrateCommands.o $(GLOBALDIR)CommandParser.o
 
 INCLUDES=	GRSIVoltageControl.h CAENHVWrapper.h
 
