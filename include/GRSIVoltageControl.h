@@ -2,6 +2,9 @@
 #define HVLOGIN_HEADER
 
 
+#include "CrateCommands.h"
+#include "CommandParser.h"
+
 // structure for information of each system
 typedef struct sys
 {

@@ -13,13 +13,13 @@
 #                                                                      #
 ########################################################################
 
-GLOBALDIR=      ./
+GLOBALDIR= ./
 
-PROGRAM=	$(GLOBALDIR)GRSIVoltageControl
+PROGRAM=	$(GLOBALDIR)GRSIHVControl
 
 CC=		gcc
 
-FLAGS=		-DUNIX -DLINUX
+FLAGS=		-DUNIX -DLINUX -Wall
 
 LFLAGS=
 
