@@ -1,55 +1,41 @@
 ########################################################################
 #                                                                      #
-#              --- CAEN SpA - Computing Division ---                   #
+#              Gamma-Ray Spectroscopy at ISAC (GRSI)
 #                                                                      #
-#   CAENHVWRAPPER Software Project                                     #
+#   High voltage control 
 #                                                                      #
-#   Makefile: it installs shared library and HVWrapperdemo             #
+#   Makefile: builds high voltage control program 
 #                                                                      #
-#   Created: January 2010                                              #
-#   Last mod: June  2016					                           #
+#   Created: October 2019
+#   Last mod: October 2019
 #                                                                      #
-#   Auth: A. Lucchesi                                                  #
+#   Auth: C. Natzke
 #                                                                      #
 ########################################################################
 
-GLOBALDIR= ./
+TARGET_EXEC ?= GRSIHVControl
 
-PROGRAM=	$(GLOBALDIR)GRSIHVControl
+SRC_DIR ?= ./src
+OBJ_DIR ?= ./obj
 
-CC=		gcc
+SRC = $(wildcard $(SRC_DIR)/*.c)
+OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-FLAGS=		-DUNIX -DLINUX -Wall
+CPPFLAGS += -Iinclude
+CFLAGS   += -DUNIX -DLINUX -Wall
+LDFLAGS  +=
+LDLIBS   += -lcaenhvwrapper -lncurses -lpthread -ldl -lm
 
-LFLAGS=
+################################################################################
+.PHONY: all clean
 
-LIBS=		-lcaenhvwrapper -lncurses -lpthread -ldl -lm
+all: $(TARGET_EXEC)
 
+$(TARGET_EXEC): $(OBJ)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
 
-INCLUDEDIR=	-I./$(GLOBALDIR) -I./include/
-
-SOURCES=	$(GLOBALDIR)GRSIVoltageControl.c $(GLOBALDIR)CrateCommands.c $(GLOBALDIR)CommandParser.c
-
-OBJECTS=	$(GLOBALDIR)GRSIVoltageControl.o $(GLOBALDIR)CrateCommands.o $(GLOBALDIR)CommandParser.o
-
-INCLUDES=	GRSIVoltageControl.h CAENHVWrapper.h
-
-########################################################################
-
-ARFLAGS=		r
-
-CFLAGS=			$(FLAGS)
-
-all:			$(PROGRAM)
-
-$(PROGRAM):		$(OBJECTS)
-			$(CC) $(CFLAGS) $(LFLAGS) -o $(PROGRAM) $(OBJECTS)\
-			$(LIBS)
-
-$(OBJECTS):		$(SOURCES)
-
-$(GLOBALDIR)%.o:	$(GLOBALDIR)%.c
-			$(CC) $(CFLAGS) $(INCLUDEDIR) -o $@ -c $<
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 clean:
-			rm -f $(OBJECTS) $(PROGRAM)
+	$(RM) $(OBJ) $(TARGET_EXEC)
