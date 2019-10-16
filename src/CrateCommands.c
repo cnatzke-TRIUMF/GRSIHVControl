@@ -63,13 +63,34 @@ void HVSystemLogin(const char * hostname, const char * userName, const char * pa
       return;
    }
 
+   // 1527 -> 0, 4527 -> 2
    // matching hostname to host IP
-   if(strcmp(hostname, "grifhv03") == 0){
+   if(strcmp(hostname, "grifhv00") == 0){
+      strcpy(hostIP, "142.90.119.252");
+      sysType = 0;
+   }
+   else if(strcmp(hostname, "grifhv02") == 0){
+      strcpy(hostIP, "142.90.127.153");
+      sysType = 2;
+   }
+   else if(strcmp(hostname, "grifhv03") == 0){
       strcpy(hostIP, "142.90.121.131");
       sysType = 2;
    }
+   else if(strcmp(hostname, "grifhv04") == 0){
+      strcpy(hostIP, "142.90.121.137");
+      sysType = 2;
+   }
    else if(strcmp(hostname, "tighv00") == 0){
+      strcpy(hostIP, "142.90.97.143");
+      sysType = 0;
+   }
+   else if(strcmp(hostname, "tighv01") == 0){
       strcpy(hostIP, "142.90.97.225");
+      sysType = 0;
+   }
+   else if(strcmp(hostname, "tighv02") == 0){
+      strcpy(hostIP, "142.90.97.226");
       sysType = 0;
    }
    else {

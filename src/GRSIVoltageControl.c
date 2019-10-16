@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
 
    ParseInputs(argc, argv);
 
-   // logout of crates
+   // logout of crate
    HVSystemLogout();
 
    return 0;
