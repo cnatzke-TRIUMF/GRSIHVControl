@@ -60,8 +60,8 @@ void ParseInputs(int argc, char *argv[])
                         if (argc == 5){
                            chanName = argv[1];
                            chanV = atof(argv[2]);
-                           printf("\n::: Attempting to change voltage of channel %s.\n", chanName);
-                           ChangeVoltage(hvSysHandle, hvSysName, chanName, chanV, NrOfSlots, NrOfChList);
+                           printf("\n::: Attempting to adjust the voltage of channel %s.\n", chanName);
+                           ChangeVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
                            printf("::: Done\n");
                         }
                         break;

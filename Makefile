@@ -15,6 +15,7 @@
 
 TARGET_EXEC ?= GRSIHVControl
 
+CC = gcc
 SRC_DIR ?= ./src
 OBJ_DIR ?= ./obj
 

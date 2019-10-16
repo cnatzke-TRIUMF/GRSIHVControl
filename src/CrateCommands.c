@@ -293,7 +293,7 @@ void ChangeParameter(const int hvSysHandle, unsigned short slotNum, unsigned sho
 //
 // description - Changes voltage  of a single channel
 //==============================================================================
-void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, double chNew, unsigned short NrOfSlots, unsigned short ChList[])
+void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[])
 {
    CAENHVRESULT returnCode; 
    char chName[12];
@@ -303,6 +303,7 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
    unsigned short j = 0;
    bool chFound = false;
 
+   printf("Passed voltage: %f\n", chNew);
    // varifying we can find the channel of interest
    for (i = 0; i < NrOfSlots; i++){
       for (j = 0; j < ChList[i]; j++){
@@ -324,11 +325,14 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
       return;
    }
 
+   // getting old voltage value
    returnCode = CAENHV_GetChParam(hvSysHandle, i, parName, 1, &j, (void *) &chValue);
    if(returnCode){
       fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
    }
-   returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, (void *) &chNew);
+
+   // setting new voltage value
+   returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, &chNew);
    if(returnCode){
       fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
    }
@@ -351,7 +355,6 @@ void AdjustVoltage(const int hvSysHandle, const char* hvSysName, const char * ch
    unsigned short j = 0;
    bool chFound = false;
 
-   printf("Here: %f\n", chNew);
    // varifying we can find the channel of interest
    for (i = 0; i < NrOfSlots; i++){
       for (j = 0; j < ChList[i]; j++){

@@ -23,7 +23,7 @@ void HVSystemLogin(const char * hvSysName, const char * userName, const char * p
 void HVSystemLogout(void);
 void WriteToXML(const char *hvSysName, const int hvSysHandle, ushort NumSlots, ushort ChannelsInSlot[], const char *filename);
 void ChangeParameter(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, float chNew, const char * parName);
-void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, double chNew, unsigned short NrOfSlots, unsigned short ChList[]);
+void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
 void AdjustVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
 
 #endif
