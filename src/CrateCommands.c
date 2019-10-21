@@ -412,4 +412,145 @@ void AdjustVoltage(const int hvSysHandle, const char* hvSysName, const char * ch
    }
    printf("%s Changed from %f to %f \n", parName, chValue, chNew);
 
+} // end AdjustVoltage
+
+
+//==============================================================================
+// ToggleChPower
+//
+// Description - Toggles the power of all A/B channels in GRIFFIN
+//
+// @param hvSysHandle   The system handle
+// @param hvSysName     The human readable system name
+// @param chanType      A/B Channels 
+// @param state         1/0 (On/Off)
+// @param NrOfSlots     Number of slots in crate 
+// @param ChList        List of channels in slot
+//==============================================================================
+void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[])
+{
+   CAENHVRESULT returnCode;
+   char chName[12];
+   const char * chType;
+   int len;
+   unsigned short i = 1;
+   unsigned short j = 0;
+   int changeCount = 0;
+
+   // varifying we can find the channel of interest
+   for (i = 0; i < NrOfSlots; i++){
+      for (j = 0; j < ChList[i]; j++){
+         returnCode = CAENHV_GetChName(hvSysHandle, i, 1, &j, (char (*)[12]) chName);
+         if(returnCode){
+            fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+         }
+         // extract last character of channel name
+         len = strlen(chName);
+         chType = &chName[len - 1];
+
+         if(strcmp(chanType, chType) == 0){
+            printf("Found %s in %s Slot %i Channel %i \n", chName, (char *) hvSysName, i, j);
+            TogglePower(hvSysHandle, hvSysName, chName, state, i, j);
+            changeCount += 1;
+         }
+      }
+   }
+   
+   // if channel is not found
+   if (changeCount == 0){ 
+      printf("ERROR: %s channels not found in %s \n Are the channels named properly?\n", chanType, (char *) hvSysName);
+   }
+} // ToggleUpChannels
+
+//==============================================================================
+// ToggleChPower
+//
+// Description - Toggles the power of a single channel. 
+//
+// @param hvSysHandle   The system handle
+// @param hvSysName     The human readable system name
+// @param chanName      Name of the channel
+// @param state         1/0 (On/Off)
+// @param NrOfSlots     Number of slots in crate
+// @param ChList        List of channels in slot
+//==============================================================================
+void ToggleChPower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short NrOfSlots, unsigned short ChList[])
+{
+   CAENHVRESULT returnCode; 
+   char chName[12];
+   unsigned short i = 1;
+   unsigned short j = 0;
+
+   // varifying we can find the channel of interest
+   for (i = 0; i < NrOfSlots; i++){
+      for (j = 0; j < ChList[i]; j++){
+         returnCode = CAENHV_GetChName(hvSysHandle, i, 1, &j, (char (*)[12]) chName);
+         if(returnCode){
+            fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+         }
+         if(strcmp(chName, chanName) == 0){
+            printf("Found %s in %s Slot %i Channel %i \n", chanName, (char *) hvSysName, i, j);
+            TogglePower(hvSysHandle, hvSysName, chanName, state, i, j);
+            return;
+         }
+      }
+   }
+   
+   // if channel is not found
+   printf("%s not found in %s \n", chanName, (char *) hvSysName);
+
+} // end ToggleChPower
+
+//==============================================================================
+// TogglePower
+//
+// Description - Toggles the power of a channel 
+//
+// @param hvSysHandle   The system handle
+// @param hvSysName     The human readable system name
+// @param chanName      Name of the channel
+// @param state         1/0 (On/Off)
+// @param i             Channel index
+// @param j             Slot index
+//==============================================================================
+void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short i, unsigned short j)
+{
+   CAENHVRESULT returnCode; 
+   const char * parName = "Pw";
+   unsigned powerVal;
+
+   // check status of power state and exit if it does not need to be changed
+   returnCode = CAENHV_GetChParam(hvSysHandle, i, parName, 1, &j, (void *) &powerVal);
+   if(returnCode){
+      fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+   }
+
+   if( powerVal == state && powerVal == 1 ){
+      fprintf(stdout, "\tPower to channel %s is already ON.\n", chanName);
+   }
+   else if( powerVal == state && powerVal == 0 ){
+      fprintf(stdout, "\tPower to channel %s is already OFF.\n", chanName);
+   }
+   else{ 
+      returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, &state);
+      if(returnCode){
+         fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+         return;
+      }
+      // success message
+      printf("\tPower toggled for %s\n", chanName);
+   }
 }
+
+//==============================================================================
+// ToggleChPower
+//
+// Description - Toggles the power of a single channel. 
+//
+// @param hvSysHandle   The system handle
+// @param hvSysName     The human readable system name
+// @param chanName      Name of the channel
+// @param state         1/0 (On/Off)
+// @param NrOfSlots     Number of slots in crate
+// @param ChList        List of channels in slot
+//==============================================================================

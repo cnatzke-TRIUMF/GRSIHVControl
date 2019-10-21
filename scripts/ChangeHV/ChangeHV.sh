@@ -13,11 +13,14 @@
 #  hvChange.txt   -> Change in voltage for each channel
 ################################################################################
 
-# Change these variables to your preference
+################################################################################
+# ---> USER DEFINED VARIABLES <---
+################################################################################
 ARRAY=TIGRESS
 MAPFILE=crateMap.txt
 VOLTFILE=hvMap.txt
 CHANGEFILE=hvChange.txt
+################################################################################
 
 declare -A crateMap
 
@@ -33,48 +36,42 @@ if [[ $CHANGEFILE -nt $VOLTFILE ]]; then
    echo 
    echo ":::: Adjusting voltages"
    readarray rows < $CHANGEFILE
-
-   # Changing TIGRESS Channels
-   if [[ $ARRAY == 'TIGRESS' ]]; then 
-      for row in "${rows[@]}"; do
-         row_array=(${row})
-         channel=${row_array[0]}
-         deltaV=${row_array[1]}
+   for row in "${rows[@]}"; do
+      row_array=(${row})
+      channel=${row_array[0]}
+      deltaV=${row_array[1]}
+      if [[ $ARRAY == 'TIGRESS' ]]; then 
          hvLocation=${channel%-*}
+      elif [[ $ARRAY == 'GRIFFIN' ]]; then 
+         echo "Hello"
+         # need to fill in 
+      fi
 
-         # matches channel to high voltage crate and changes voltage
-         echo "./GRSIHVControl $channel $deltaV -a ${crateMap[$hvLocation]}"
-      done 
-   fi
+      # matches channel to high voltage crate and changes voltage
+      echo "./GRSIHVControl $channel $deltaV -a ${crateMap[$hvLocation]}"
+   done 
 
-   # Changing TIGRESS Channels
-   if [[ $ARRAY == 'GRIFFIN' ]]; then 
-     echo "Changing GRIFFIN Voltages" 
-   fi
-
-# if the hvMap file is newer than the change file
+   # if the hvMap file is newer than the change file
 else
    echo 
    echo ":::: Setting voltages"
    readarray rows < $VOLTFILE
 
    # Setting TIGRESS Channels
-   if [[ $ARRAY == 'TIGRESS' ]]; then 
-      for row in "${rows[@]}"; do
-         row_array=(${row})
-         channel=${row_array[0]}
-         voltage=${row_array[1]}
+   for row in "${rows[@]}"; do
+      row_array=(${row})
+      channel=${row_array[0]}
+      voltage=${row_array[1]}
+      if [[ $ARRAY == 'TIGRESS' ]]; then 
          hvLocation=${channel%-*}
+      elif [[ $ARRAY == 'GRIFFIN' ]]; then 
+         echo "Hello There"
+         # need to fill in 
+      fi
 
-         # matches channel to high voltage crate and changes voltage
-         echo "./GRSIHVControl $channel $voltage -v ${crateMap[$hvLocation]}"
-      done 
-   fi
-
-   # Setting GRIFFIN Channels
-   if [[ $ARRAY == 'GRIFFIN' ]]; then 
-     echo "Setting GRIFFIN Voltages" 
-   fi
+      # matches channel to high voltage crate and changes voltage
+      echo "./GRSIHVControl $channel $voltage -v ${crateMap[$hvLocation]}"
+   done 
 fi
 
 echo

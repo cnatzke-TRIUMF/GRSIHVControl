@@ -22,6 +22,8 @@ void ParseInputs(int argc, char *argv[])
    unsigned char *FmVerLSByte = NULL; // LSByte of firmware release
    unsigned char *FmVerMSByte = NULL; // MSByte of firmware release
    const char * chanName = NULL;
+   const char * chanType = NULL;
+   unsigned state;
 
    // copies crate name to string so its modifiable (modifying argv = bad)
    strcpy(hvSysName, argv[argc - 1]);
@@ -78,6 +80,39 @@ void ParseInputs(int argc, char *argv[])
                            chanV = atof(argv[2]);
                            printf("\n::: Attempting to adjust the voltage of channel %s.\n", chanName);
                            AdjustVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
+                           printf("::: Done\n");
+                        }
+                        break;
+
+                     // Searches all channels for a specific name and toggles
+                     // power
+                     case 'p':
+                        if(argc != 5){
+                           printf("::: ToggleChPower \n");
+                           printf("ERROR: 5 arguments needed, %i given\n", argc);
+                           return;
+                        }
+                        if(argc == 5){
+                           chanName = argv[1];
+                           state = atof(argv[2]);
+                           printf("\n::: Attempting to toggle power of channel %s.\n", chanName);
+                           ToggleChPower(hvSysHandle, hvSysName, chanName, state, NrOfSlots, NrOfChList);
+                           printf("::: Done\n");
+                        }
+                        break;
+                     // Searches all channels for a specific type (A/B)
+                     // and toggles power
+                     case 't':
+                        if(argc != 5){
+                           printf("::: ToggleUpChannels\n");
+                           printf("ERROR: 5 arguments needed, %i given\n", argc);
+                           return;
+                        }
+                        if(argc == 5){
+                           chanType = argv[1];
+                           state = atof(argv[2]);
+                           printf("\n::: Attempting to toggle power of %s channels.\n", chanType);
+                           ToggleUpChannels(hvSysHandle, hvSysName, chanType, state, NrOfSlots, NrOfChList);
                            printf("::: Done\n");
                         }
                         break;
