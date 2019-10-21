@@ -13,7 +13,6 @@ void ParseInputs(int argc, char *argv[])
    char filename[80]; 
    char hvSysName[80];
 
-   // crate map variables
    unsigned short NrOfSlots = 0; // number of slots in crate
    unsigned short *NrOfChList = NULL; // number of channels in each slots
    char *ModelList = NULL; // board model 
@@ -23,6 +22,8 @@ void ParseInputs(int argc, char *argv[])
    unsigned char *FmVerMSByte = NULL; // MSByte of firmware release
    const char * chanName = NULL;
    const char * chanType = NULL;
+   unsigned short slotN = NULL;
+   unsigned short chanN = NULL;
    unsigned state;
 
    // copies crate name to string so its modifiable (modifying argv = bad)
@@ -114,6 +115,27 @@ void ParseInputs(int argc, char *argv[])
                            printf("\n::: Attempting to toggle power of %s channels.\n", chanType);
                            ToggleUpChannels(hvSysHandle, hvSysName, chanType, state, NrOfSlots, NrOfChList);
                            printf("::: Done\n");
+                        }
+                        break;
+                     // Changes names of channels in crate
+                     case 'n':
+                        if(argc != 6){
+                           printf("::: ChangeName\n");
+                           printf("ERROR: 6 arguments needed, %i given\n", argc);
+                           return;
+                        }
+                        if(argc == 6){
+                           slotN = atof(argv[1]);
+                           chanN = atof(argv[2]);
+                           chanName = argv[3];
+                           if(NrOfChList[slotN] < chanN){
+                              printf("Number of channels exceeds number of channels in slot. Aborting.\n");
+                           }
+                           else {
+                              //printf("\n::: Attempting to name channels\n");
+                              ChangeName(hvSysHandle, slotN, chanN, chanName);
+                              //printf("::: Done\n");
+                           }
                         }
                         break;
                      default: 

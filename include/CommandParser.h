@@ -21,5 +21,5 @@ void ParseInputs(int argc, char *argv[]);
 int hvSysHandle;
 float chanV;
 
-
+// crate map variables
 #endif

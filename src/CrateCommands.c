@@ -102,7 +102,7 @@ void HVSystemLogin(const char * hostname, const char * userName, const char * pa
    // connections
    link = LINKTYPE_TCPIP;
 
-   printf("::: Attempting to log into HV Crate\n");
+   //printf("::: Attempting to log into HV Crate\n");
    if( sysType == 0 || sysType == 2 ){
 
       ret = CAENHV_InitSystem((CAENHV_SYSTEM_TYPE_t)sysType, link, hostIP, userName, passwd, &sysHandle);
@@ -132,7 +132,7 @@ void HVSystemLogout()
    int i;
    CAENHVRESULT ret;
 
-   printf("\n::: Attempting to log out of crate.\n");
+   //printf("\n::: Attempting to log out of crate.\n");
 
    if( noHVPS() ) return;
 
@@ -152,8 +152,7 @@ void HVSystemLogout()
       }
    }
 
-   printf("::: Logout successful.\n");
-   return;
+   //printf("::: Logout successful.\n");
 }
 
 //==============================================================================
@@ -543,14 +542,21 @@ void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chan
 }
 
 //==============================================================================
-// ToggleChPower
+// ChangeName
 //
-// Description - Toggles the power of a single channel. 
+// Description - Changes the name of a channel 
 //
 // @param hvSysHandle   The system handle
-// @param hvSysName     The human readable system name
-// @param chanName      Name of the channel
-// @param state         1/0 (On/Off)
-// @param NrOfSlots     Number of slots in crate
-// @param ChList        List of channels in slot
+// @param slotNum       Slot number
+// @param chNum         Channel number
+// @param parName       New name of channel
 //==============================================================================
+void ChangeName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName)
+{
+   CAENHVRESULT returnCode;
+
+   returnCode = CAENHV_SetChName(hvSysHandle, slotNum, 1, &chNum, parName);
+   if(returnCode){
+      fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+   }
+}
