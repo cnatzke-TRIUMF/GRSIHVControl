@@ -551,7 +551,7 @@ void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chan
 // @param chNum         Channel number
 // @param parName       New name of channel
 //==============================================================================
-void ChangeName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName)
+void ChangeChName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName)
 {
    CAENHVRESULT returnCode;
 
@@ -560,3 +560,104 @@ void ChangeName(const int hvSysHandle, unsigned short slotNum, unsigned short ch
       fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
    }
 }
+//==============================================================================
+// ChangeName
+//
+// Description - Changes the name of a channel 
+//
+// @param hvSysHandle   The system handle
+// @param slotNum       Slot number
+// @param chNum         Channel number
+// @param parName       New name of channel
+//==============================================================================
+int ChangeName(const int hvSysHandle, const char * fileName)
+{
+   Names_t *first = NULL; Names_t *last = NULL;
+   // opening file
+   FILE * inFile = fopen(fileName, "r");
+   if (inFile == NULL){
+      printf("Could not open file %s\n", fileName);
+      return 1;
+   }
+
+   // count number of lines 
+   char c;
+   int total_rows = 0;
+   for (c = getc(inFile); c != EOF; c = getc(inFile)){
+      if (c == '\n'){
+         total_rows++;
+      }
+   };
+   rewind(inFile);
+
+   // counts columns
+   //char line[1024];
+   //int total_columns = 0;
+   //if (fgets(line, sizeof(line), inFile) != NULL){
+   //   char * p = strtok(line, "\t\n");
+   //   while (p){
+   //      ++total_columns;
+   //      p = strtok(NULL, "\t\n");
+   //   }
+   //   rewind(inFile);
+   //   printf("Total columns: %i\n", total_columns);
+   //}
+   char line[MAX_SIZE], parName[MAX_SIZE], hostName[MAX_SIZE];
+   int slotNum, chNum;
+   Names_t *nameList;
+
+   while (fgets(line, sizeof(line), inFile) != NULL){
+      // safety Checks
+      if (line[0] == '\0'){
+         printf("Line too short\n");
+         return 1;
+      }
+      if (line[strlen (line)-1] != '\n'){
+         printf("Line starting with '%s' is too long\n", line);
+         return 1;
+      }
+
+      line[strlen (line)-1] = '\0';
+
+      // scan fields
+      if (sscanf(line, "%i\t%i\t%s\t%s", &slotNum, &chNum, parName, hostName) != 4){
+         printf("Line '%s' did not scan properly\n", line);
+         return 1;
+      }
+
+      // allocate new node to hold data
+      nameList = malloc(sizeof(Names_t));
+      if (nameList == NULL) {
+         printf("Ran out of memory\n");
+         return 1;
+      }
+
+      nameList->slotNum = slotNum;
+      nameList->chNum = chNum;
+      nameList->parName = strdup(parName);
+      nameList->hostName = strdup(hostName);
+      nameList->next = NULL;
+      if (first != NULL){
+         last->next = nameList;
+         last = nameList;
+      } else {
+         first = nameList;
+         last = nameList;
+      }
+   }
+
+   fclose(inFile);
+
+   // output for debugging
+   nameList = first;
+   while (nameList != NULL){
+      //printf("ChangeName(hvSysHandle, %i, %i, %s)\n", 
+      //      nameList->slotNum, nameList->chNum, nameList->parName);
+      ChangeName(hvSysHandle, nameList->slotNum, nameList->chNum, nameList->parName);
+      nameList = nameList->next;
+   }
+
+   return 0;
+
+} // end ChangeNameFromFile
+

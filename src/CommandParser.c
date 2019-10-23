@@ -25,6 +25,7 @@ void ParseInputs(int argc, char *argv[])
    unsigned short slotN = NULL;
    unsigned short chanN = NULL;
    unsigned state;
+   const char * inFile = NULL;
 
    // copies crate name to string so its modifiable (modifying argv = bad)
    strcpy(hvSysName, argv[argc - 1]);
@@ -133,9 +134,23 @@ void ParseInputs(int argc, char *argv[])
                            }
                            else {
                               //printf("\n::: Attempting to name channels\n");
-                              ChangeName(hvSysHandle, slotN, chanN, chanName);
+                              ChangeChName(hvSysHandle, slotN, chanN, chanName);
                               //printf("::: Done\n");
                            }
+                        }
+                        break;
+                     // Changes names of channels in crate via file
+                     case 'f':
+                        if(argc != 4){
+                           printf("::: ChangeName\n");
+                           printf("ERROR: 4 arguments needed, %i given\n", argc);
+                           return;
+                        }
+                        if(argc == 4){
+                           inFile =argv[1];
+                           //printf("\n::: Attempting to name channels\n");
+                           ChangeName(hvSysHandle, inFile);
+                           //printf("::: Done\n");
                         }
                         break;
                      default: 
