@@ -544,31 +544,10 @@ void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chan
 //==============================================================================
 // ChangeName
 //
-// Description - Changes the name of a channel 
+// Description - Changes the name of a channel from a list
 //
 // @param hvSysHandle   The system handle
-// @param slotNum       Slot number
-// @param chNum         Channel number
-// @param parName       New name of channel
-//==============================================================================
-void ChangeChName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName)
-{
-   CAENHVRESULT returnCode;
-
-   returnCode = CAENHV_SetChName(hvSysHandle, slotNum, 1, &chNum, parName);
-   if(returnCode){
-      fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
-   }
-}
-//==============================================================================
-// ChangeName
-//
-// Description - Changes the name of a channel 
-//
-// @param hvSysHandle   The system handle
-// @param slotNum       Slot number
-// @param chNum         Channel number
-// @param parName       New name of channel
+// @param fileName      Path of file containing naming information
 //==============================================================================
 int ChangeName(const int hvSysHandle, const char * fileName)
 {
@@ -653,7 +632,7 @@ int ChangeName(const int hvSysHandle, const char * fileName)
    while (nameList != NULL){
       //printf("ChangeName(hvSysHandle, %i, %i, %s)\n", 
       //      nameList->slotNum, nameList->chNum, nameList->parName);
-      ChangeName(hvSysHandle, nameList->slotNum, nameList->chNum, nameList->parName);
+      ChangeChName(hvSysHandle, nameList->slotNum, nameList->chNum, nameList->parName);
       nameList = nameList->next;
    }
 
@@ -661,3 +640,22 @@ int ChangeName(const int hvSysHandle, const char * fileName)
 
 } // end ChangeNameFromFile
 
+//==============================================================================
+// ChangeChName
+//
+// Description - Changes the name of a single channel 
+//
+// @param hvSysHandle   The system handle
+// @param slotNum       Slot number
+// @param chNum         Channel number
+// @param parName       New name of channel
+//==============================================================================
+void ChangeChName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName)
+{
+   CAENHVRESULT returnCode;
+
+   returnCode = CAENHV_SetChName(hvSysHandle, slotNum, 1, &chNum, parName);
+   if(returnCode){
+      fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+   }
+}

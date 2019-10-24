@@ -91,7 +91,8 @@ void ParseInputs(int argc, char *argv[])
                      case 'p':
                         if(argc != 5){
                            printf("::: ToggleChPower \n");
-                           printf("ERROR: 5 arguments needed, %i given\n", argc);
+                           printf("ERROR: 5 arguments needed, %i given\n\n", argc);
+                           printf("./GRSIHVControl <channel> <1/0> -p <host>\n\n");
                            return;
                         }
                         if(argc == 5){
@@ -107,7 +108,8 @@ void ParseInputs(int argc, char *argv[])
                      case 't':
                         if(argc != 5){
                            printf("::: ToggleUpChannels\n");
-                           printf("ERROR: 5 arguments needed, %i given\n", argc);
+                           printf("ERROR: 5 arguments needed, %i given\n\n", argc);
+                           printf("./GRSIHVControl <A/B> <1/0> -t <host>\n\n");
                            return;
                         }
                         if(argc == 5){
@@ -120,9 +122,11 @@ void ParseInputs(int argc, char *argv[])
                         break;
                      // Changes names of channels in crate
                      case 'n':
-                        if(argc != 6){
-                           printf("::: ChangeName\n");
-                           printf("ERROR: 6 arguments needed, %i given\n", argc);
+                        if(argc != 6 || argc != 4){
+                           //printf("::: ChangeName\n");
+                           printf("ERROR: 6 arguments needed for individual channel change, 4 needed for changing with file, %i given\n\n", argc);
+                           printf("./GRSIHVControl <slot> <channel> <name> -n <host>\n");
+                           printf("./GRSIHVControl <nameFile> -n <host>\n\n");
                            return;
                         }
                         if(argc == 6){
@@ -134,23 +138,15 @@ void ParseInputs(int argc, char *argv[])
                            }
                            else {
                               //printf("\n::: Attempting to name channels\n");
-                              ChangeChName(hvSysHandle, slotN, chanN, chanName);
+                              //ChangeChName(hvSysHandle, slotN, chanN, chanName);
                               //printf("::: Done\n");
                            }
                         }
-                        break;
-                     // Changes names of channels in crate via file
-                     case 'f':
-                        if(argc != 4){
-                           printf("::: ChangeName\n");
-                           printf("ERROR: 4 arguments needed, %i given\n", argc);
-                           return;
-                        }
                         if(argc == 4){
                            inFile =argv[1];
-                           //printf("\n::: Attempting to name channels\n");
-                           ChangeName(hvSysHandle, inFile);
-                           //printf("::: Done\n");
+                           printf("\n::: Attempting to name channels using %s\n", inFile);
+                           //ChangeName(hvSysHandle, inFile);
+                           printf("::: Done\n");
                         }
                         break;
                      default: 
