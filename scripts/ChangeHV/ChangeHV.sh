@@ -16,7 +16,7 @@
 ################################################################################
 # ---> USER DEFINED VARIABLES <---
 ################################################################################
-ARRAY=TIGRESS
+ARRAY=GRIFFIN
 MAPFILE=crateMap.txt
 VOLTFILE=hvMap.txt
 CHANGEFILE=hvChange.txt
@@ -43,8 +43,7 @@ if [[ $CHANGEFILE -nt $VOLTFILE ]]; then
       if [[ $ARRAY == 'TIGRESS' ]]; then 
          hvLocation=${channel%-*}
       elif [[ $ARRAY == 'GRIFFIN' ]]; then 
-         echo "Hello"
-         # need to fill in 
+         Location=${channel%-*}
       fi
 
       # matches channel to high voltage crate and changes voltage

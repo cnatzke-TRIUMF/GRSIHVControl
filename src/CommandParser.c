@@ -122,7 +122,7 @@ void ParseInputs(int argc, char *argv[])
                         break;
                      // Changes names of channels in crate
                      case 'n':
-                        if(argc != 6 || argc != 4){
+                        if(argc != 6 && argc != 4){
                            //printf("::: ChangeName\n");
                            printf("ERROR: 6 arguments needed for individual channel change, 4 needed for changing with file, %i given\n\n", argc);
                            printf("./GRSIHVControl <slot> <channel> <name> -n <host>\n");
@@ -145,7 +145,7 @@ void ParseInputs(int argc, char *argv[])
                         if(argc == 4){
                            inFile =argv[1];
                            printf("\n::: Attempting to name channels using %s\n", inFile);
-                           //ChangeName(hvSysHandle, inFile);
+                           ChangeName(hvSysHandle, inFile);
                            printf("::: Done\n");
                         }
                         break;
