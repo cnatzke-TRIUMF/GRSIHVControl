@@ -14,10 +14,11 @@
 ########################################################################
 
 TARGET_EXEC ?= GRSIHVControl
+DIRS = .obj
 
 CC = gcc
 SRC_DIR ?= ./src
-OBJ_DIR ?= ./obj
+OBJ_DIR ?= ./.obj
 
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
@@ -26,6 +27,9 @@ CPPFLAGS += -Iinclude
 CFLAGS   += -DUNIX -DLINUX -Wall
 LDFLAGS  +=
 LDLIBS   += -lcaenhvwrapper -lncurses -lpthread -ldl -lm
+
+# Makes necesary directory
+$(info $(shell mkdir -p $(DIRS)))
 
 ################################################################################
 .PHONY: all clean
