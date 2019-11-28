@@ -26,8 +26,11 @@ SAFETYCHECK=false # Toggles safety check stage
 
 if [[ $# == 2 ]]; then
    OPTION="a"
+   STATUS_OPTION="ADJUSTING"
 elif [[ $# == 3 && $3 == "-s" ]]; then 
    OPTION="s"
+   STATUS_OPTION="SETTING"
+elif [[ $# == 3 && $3 == "-s" ]]; then 
    echo "Setting Votages"
    exit
 else
@@ -80,7 +83,7 @@ done
 
 # CHANGING VOLTAGE VALUES
 echo 
-echo ":::: Adjusting voltages"
+echo ":::: $STATUS_OPTION VOLTAGES"
 
 # looping through hv crates
 for crate_file in "${crateNames[@]}"; do 
@@ -93,39 +96,4 @@ for crate_file in "${crateNames[@]}"; do
 done
 #
 echo
-echo ":::: Finished"
-
-#      deltaV=${row_array[1]}
-#      if [[ $ARRAY == 'TIGRESS' ]]; then 
-#         hvLocation=${channel%-*}
-#      elif [[ $ARRAY == 'GRIFFIN' ]]; then 
-#         hvLocation=${channel:3:2} # parses array position from mnemonic
-#         crate=$crateMap[$hvLocation]
-#         awk '{if (substr($1,4,2) > ) print $1 "," $2}' HV_Change.txt > test.test
-#      fi
-#
-#      # matches channel to high voltage crate and changes voltage
-#      #GRSIHVControl $channel $deltaV -a ${crateMap[$hvLocation]}
-#      #sleep 1
-#
-#   # if the hvMap file is newer than the change file
-#else
-#   echo 
-#   echo ":::: Setting voltages"
-#   readarray rows < $VOLTFILE
-#
-#   # Setting TIGRESS Channels
-#   for row in "${rows[@]}"; do
-#      row_array=(${row})
-#      channel=${row_array[0]}
-#      voltage=${row_array[1]}
-#      if [[ $ARRAY == 'TIGRESS' ]]; then 
-#         hvLocation=${channel%-*}
-#      elif [[ $ARRAY == 'GRIFFIN' ]]; then 
-#         echo "Hello There"
-#         # need to fill in 
-#      fi
-#
-#      # matches channel to high voltage crate and changes voltage
-#      echo "./GRSIHVControl $channel $voltage -v ${crateMap[$hvLocation]}"
-#   done 
+echo ":::: FINISHED"
