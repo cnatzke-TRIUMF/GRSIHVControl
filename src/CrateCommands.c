@@ -361,11 +361,11 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
 }
 
 //==============================================================================
-// AdjustVoltage
+// AdjustChannelVoltage
 //
 // description - adjusts voltage  of a single channel
 //==============================================================================
-void AdjustVoltage(const int hvSysHandle, const char* hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[])
+void AdjustChannelVoltage(const int hvSysHandle, const char* hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[])
 {
    CAENHVRESULT returnCode; 
    char chName[12];
@@ -411,8 +411,29 @@ void AdjustVoltage(const int hvSysHandle, const char* hvSysName, const char * ch
    }
    printf("%s Changed from %f to %f \n", parName, chValue, chNew);
 
-} // end AdjustVoltage
+} // end AdjustChannelVoltage
 
+//==============================================================================
+// AdjustCrateVoltage
+//
+// Description - Adjusts the voltage of a channel from a list
+//
+// @param hvSysHandle   The system handle
+// @param fileName      Path of file containing voltage information
+//==============================================================================
+int AdjustCrateVoltage(const int hvSysHandle, const char * fileName)
+{
+   FILE * inFile = fopen(fileName, "r");
+   if (inFile == NULL){
+      printf("Could not open file %s\n", fileName);
+      return 1;
+   }
+
+   int total_rows = CountFileLines(inFile);
+   printf("Found %i lines.\n", total_rows);
+
+   return 0;
+} // end AdjustCrateVoltage
 
 //==============================================================================
 // ToggleChPower
@@ -542,14 +563,14 @@ void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chan
 }
 
 //==============================================================================
-// ChangeName
+// ChangeCrateName
 //
 // Description - Changes the name of a channel from a list
 //
 // @param hvSysHandle   The system handle
 // @param fileName      Path of file containing naming information
 //==============================================================================
-int ChangeName(const int hvSysHandle, const char * fileName)
+int ChangeCrateName(const int hvSysHandle, const char * fileName)
 {
    Names_t *first = NULL; Names_t *last = NULL;
    // opening file
@@ -560,27 +581,8 @@ int ChangeName(const int hvSysHandle, const char * fileName)
    }
 
    // count number of lines 
-   char c;
-   int total_rows = 0;
-   for (c = getc(inFile); c != EOF; c = getc(inFile)){
-      if (c == '\n'){
-         total_rows++;
-      }
-   };
-   rewind(inFile);
+   //int total_rows = CountFileLines(inFile);
 
-   // counts columns
-   //char line[1024];
-   //int total_columns = 0;
-   //if (fgets(line, sizeof(line), inFile) != NULL){
-   //   char * p = strtok(line, "\t\n");
-   //   while (p){
-   //      ++total_columns;
-   //      p = strtok(NULL, "\t\n");
-   //   }
-   //   rewind(inFile);
-   //   printf("Total columns: %i\n", total_columns);
-   //}
    char line[MAX_SIZE], parName[MAX_SIZE], hostName[MAX_SIZE];
    int slotNum, chNum;
    Names_t *nameList;
@@ -632,7 +634,7 @@ int ChangeName(const int hvSysHandle, const char * fileName)
    while (nameList != NULL){
       //printf("ChangeName(hvSysHandle, %i, %i, %s)\n", 
       //      nameList->slotNum, nameList->chNum, nameList->parName);
-      ChangeChName(hvSysHandle, nameList->slotNum, nameList->chNum, nameList->parName);
+      ChangeChannelName(hvSysHandle, nameList->slotNum, nameList->chNum, nameList->parName);
       nameList = nameList->next;
    }
 
@@ -641,7 +643,7 @@ int ChangeName(const int hvSysHandle, const char * fileName)
 } // end ChangeNameFromFile
 
 //==============================================================================
-// ChangeChName
+// ChangeChannelName
 //
 // Description - Changes the name of a single channel 
 //
@@ -650,7 +652,7 @@ int ChangeName(const int hvSysHandle, const char * fileName)
 // @param chNum         Channel number
 // @param parName       New name of channel
 //==============================================================================
-void ChangeChName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName)
+void ChangeChannelName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName)
 {
    CAENHVRESULT returnCode;
 
@@ -659,3 +661,45 @@ void ChangeChName(const int hvSysHandle, unsigned short slotNum, unsigned short 
       fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
    }
 }
+
+//==============================================================================
+// CountFileLines
+//
+// Description - Counts number of lines in file
+//
+// @param inFile   The input file
+//==============================================================================
+int CountFileLines(FILE * inFile)
+{
+   char c;
+   int total_rows = 0;
+   for (c = getc(inFile); c != EOF; c = getc(inFile)){
+      if (c == '\n'){
+         total_rows++;
+      }
+   };
+   return total_rows;
+
+} // end CountFileLines
+
+//==============================================================================
+// CountFileColumns
+//
+// Description - Counts number of columns in file
+//
+// @param inFile   The input file
+// NEED TO BUILD IF NEEDED
+//==============================================================================
+int CountFileColumns(FILE * inFile)
+{
+//   char line[1024];
+   int total_columns = 0;
+//   if (fgets(line, sizeof(line), inFile) != NULL){
+//      char * p = strtok(line, "\t\n");
+//      while (p){
+//         ++total_columns;
+//         p = strtok(NULL, "\t\n");
+//      }
+//   }
+   return total_columns;
+} // end CountFileColumns

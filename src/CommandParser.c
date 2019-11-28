@@ -70,19 +70,23 @@ void ParseInputs(int argc, char *argv[])
                         }
                         break;
                      case 'a':
-                        // Searches all channels for a specific name and
-                        // adjusts the channel voltage.
-                        if(argc != 5){
-                           printf("::: AdjustVoltage \n");
-                           printf("ERROR: 5 arguments needed, %i given\n", argc);
+                        // Searches all channels for a specific name and adjusts the channel voltage.
+                        // or uses file to change entire crate at once
+                        if(argc != 5 && argc != 4){
+                           printf("ERROR: 5 arguments needed for individual channel adjustment, 4 needed for adjusting with file, %i given\n\n", argc);
+                           printf("./GRSIHVControl <name> <voltage change> -a <host>\n");
+                           printf("./GRSIHVControl <voltage file> -a <host>\n\n");
                            return;
                         }
                         if(argc == 5){
                            chanName = argv[1];
                            chanV = atof(argv[2]);
-                           printf("\n::: Attempting to adjust the voltage of channel %s.\n", chanName);
-                           AdjustVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
-                           printf("::: Done\n");
+                           //printf("\n::: Attempting to adjust the voltage of channel %s.\n", chanName);
+                           AdjustChannelVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
+                        }
+                        if(argc == 4){
+                           inFile = argv[1];
+                           AdjustCrateVoltage(hvSysHandle, inFile);
                         }
                         break;
 
@@ -138,14 +142,14 @@ void ParseInputs(int argc, char *argv[])
                            }
                            else {
                               //printf("\n::: Attempting to name channels\n");
-                              //ChangeChName(hvSysHandle, slotN, chanN, chanName);
+                              //ChangeChannelName(hvSysHandle, slotN, chanN, chanName);
                               //printf("::: Done\n");
                            }
                         }
                         if(argc == 4){
                            inFile =argv[1];
                            printf("\n::: Attempting to name channels using %s\n", inFile);
-                           ChangeName(hvSysHandle, inFile);
+                           ChangeCrateName(hvSysHandle, inFile);
                            printf("::: Done\n");
                         }
                         break;

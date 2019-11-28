@@ -32,8 +32,15 @@ typedef struct Names{
    struct Names *next;
 } Names_t;
 
+typedef struct Voltages{
+   int slotNum;
+   int chNum;
+   char * voltageChange;
+   char * hostName;
+} Voltages_t;
 
 extern HV System[];
 extern Names_t nameList;
+extern Voltages_t voltList[];
 
 #endif

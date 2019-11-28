@@ -27,11 +27,14 @@ void HVSystemLogout(void);
 void WriteToXML(const char *hvSysName, const int hvSysHandle, ushort NumSlots, ushort ChannelsInSlot[], const char *filename);
 void ChangeParameter(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, float chNew, const char * parName);
 void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
-void AdjustVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
+void AdjustChannelVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
+int AdjustCrateVoltage(const int hvSysHandle, const char * inFile);
 void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);
 void ToggleChPower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);
 void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short i, unsigned short j);
-void ChangeChName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName);
-int ChangeName(const int hvSysHandle, const char * inFile);
+void ChangeChannelName(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, const char * parName);
+int ChangeCrateName(const int hvSysHandle, const char * inFile);
+int CountFileLines(FILE * inFile);
+int CountFileColumns(FILE * inFile);
 
 #endif
