@@ -339,7 +339,7 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
       }
       if(chFound) break;
    }
-   
+
    if(!chFound){
       printf("%s not found in %s \n", chanName, (char *) hvSysName);
       return;
@@ -359,6 +359,91 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
    printf("%s Changed from %f to %f \n", parName, chValue, chNew);
 
 }
+
+//==============================================================================
+// AdjustCrateVoltage
+//
+// Description - Adjusts the voltage of a channel from a list
+//
+// @param hvSysHandle   The system handle
+// @param fileName      Path of file containing voltage information
+//==============================================================================
+int AdjustCrateVoltage(const int hvSysHandle, const char * fileName, unsigned short NrOfSlots, unsigned short ChList[])
+{
+   Voltages_t *voltList;
+   Voltages_t *first = NULL; Voltages_t *last = NULL;
+   char line[MAX_SIZE],chName[MAX_SIZE], hostName[MAX_SIZE];
+   int deltaV;
+
+   FILE * inFile = fopen(fileName, "r");
+   if (inFile == NULL){
+      printf("Could not open file %s\n", fileName);
+      return 1;
+   }
+
+   //int total_rows = CountFileLines(inFile);
+   //printf("Found %i lines.\n", total_rows);
+
+   // extracting hostName from fileName
+   strcpy(hostName, fileName);
+   hostName[strlen(hostName) - 4] = 0;
+
+   while (fgets(line, sizeof(line), inFile) != NULL){
+      // safety Checks
+      if (line[0] == '\0'){
+         printf("Line too short\n");
+         return 1;
+      }
+      if (line[strlen (line)-1] != '\n'){
+         printf("Line starting with '%s' is too long\n", line);
+         return 1;
+      }
+
+      line[strlen(line)-1] = '\0';
+
+      // scan fields
+      if (sscanf(line, "%[^,],%i", chName, &deltaV) != 2){
+         printf("Line '%s' did not scan properly\n", line);
+         return 1;
+      }
+
+      // allocate new node to hold data
+      voltList = malloc(sizeof(voltList));
+      if (voltList == NULL) {
+         printf("Ran out of memory\n");
+         return 1;
+      }
+
+      voltList->chName = strdup(chName);
+      voltList->deltaV = deltaV;
+      voltList->hostName = strdup(hostName);
+      voltList->next = NULL;
+      if (first != NULL){
+         last->next = voltList;
+         last = voltList;
+      } else {
+         first = voltList;
+         last = voltList;
+      }
+   }
+
+   fclose(inFile);
+
+   // output for debugging
+   voltList = first;
+   while (voltList != NULL){
+      printf("AdjustCrateVoltage(hvSysHandle, %s, %i, %s, NrOfSlots, NrOfChList)\n", 
+            voltList->chName, voltList->deltaV, voltList->hostName);
+      AdjustChannelVoltage(hvSysHandle, voltList->hostName, voltList->chName, voltList->deltaV, NrOfSlots, ChList);
+      //AdjustChannelVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
+      voltList = voltList->next;
+   }
+
+   // Freeing memory
+   free(voltList);
+
+   return 0;
+} // end AdjustCrateVoltage
 
 //==============================================================================
 // AdjustChannelVoltage
@@ -390,7 +475,7 @@ void AdjustChannelVoltage(const int hvSysHandle, const char* hvSysName, const ch
       }
       if(chFound) break;
    }
-   
+
    if(!chFound){
       printf("%s not found in %s \n", chanName, (char *) hvSysName);
       return;
@@ -412,28 +497,6 @@ void AdjustChannelVoltage(const int hvSysHandle, const char* hvSysName, const ch
    printf("%s Changed from %f to %f \n", parName, chValue, chNew);
 
 } // end AdjustChannelVoltage
-
-//==============================================================================
-// AdjustCrateVoltage
-//
-// Description - Adjusts the voltage of a channel from a list
-//
-// @param hvSysHandle   The system handle
-// @param fileName      Path of file containing voltage information
-//==============================================================================
-int AdjustCrateVoltage(const int hvSysHandle, const char * fileName)
-{
-   FILE * inFile = fopen(fileName, "r");
-   if (inFile == NULL){
-      printf("Could not open file %s\n", fileName);
-      return 1;
-   }
-
-   int total_rows = CountFileLines(inFile);
-   printf("Found %i lines.\n", total_rows);
-
-   return 0;
-} // end AdjustCrateVoltage
 
 //==============================================================================
 // ToggleChPower
@@ -475,7 +538,7 @@ void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char *
          }
       }
    }
-   
+
    // if channel is not found
    if (changeCount == 0){ 
       printf("ERROR: %s channels not found in %s \n Are the channels named properly?\n", chanType, (char *) hvSysName);
@@ -515,7 +578,7 @@ void ToggleChPower(const int hvSysHandle, const char* hvSysName, const char * ch
          }
       }
    }
-   
+
    // if channel is not found
    printf("%s not found in %s \n", chanName, (char *) hvSysName);
 
@@ -638,9 +701,10 @@ int ChangeCrateName(const int hvSysHandle, const char * fileName)
       nameList = nameList->next;
    }
 
+   free(nameList);
    return 0;
 
-} // end ChangeNameFromFile
+} // end ChangeCrateName
 
 //==============================================================================
 // ChangeChannelName
@@ -678,6 +742,9 @@ int CountFileLines(FILE * inFile)
          total_rows++;
       }
    };
+   // rewinding file
+   rewind(inFile);
+
    return total_rows;
 
 } // end CountFileLines
@@ -692,14 +759,14 @@ int CountFileLines(FILE * inFile)
 //==============================================================================
 int CountFileColumns(FILE * inFile)
 {
-//   char line[1024];
+   //   char line[1024];
    int total_columns = 0;
-//   if (fgets(line, sizeof(line), inFile) != NULL){
-//      char * p = strtok(line, "\t\n");
-//      while (p){
-//         ++total_columns;
-//         p = strtok(NULL, "\t\n");
-//      }
-//   }
+   //   if (fgets(line, sizeof(line), inFile) != NULL){
+   //      char * p = strtok(line, "\t\n");
+   //      while (p){
+   //         ++total_columns;
+   //         p = strtok(NULL, "\t\n");
+   //      }
+   //   }
    return total_columns;
 } // end CountFileColumns

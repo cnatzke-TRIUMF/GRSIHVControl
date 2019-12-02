@@ -64,11 +64,14 @@ void ParseInputs(int argc, char *argv[])
                         if (argc == 5){
                            chanName = argv[1];
                            chanV = atof(argv[2]);
-                           printf("\n::: Attempting to adjust the voltage of channel %s.\n", chanName);
+                           printf("\n::: Attempting to set the voltage of channel %s.\n", chanName);
                            ChangeVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
                            printf("::: Done\n");
                         }
                         break;
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // Adjusting voltage values
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      case 'a':
                         // Searches all channels for a specific name and adjusts the channel voltage.
                         // or uses file to change entire crate at once
@@ -86,12 +89,13 @@ void ParseInputs(int argc, char *argv[])
                         }
                         if(argc == 4){
                            inFile = argv[1];
-                           AdjustCrateVoltage(hvSysHandle, inFile);
+                           AdjustCrateVoltage(hvSysHandle, inFile, NrOfSlots, NrOfChList);
                         }
                         break;
 
-                     // Searches all channels for a specific name and toggles
-                     // power
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // Toggles power of single channel
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      case 'p':
                         if(argc != 5){
                            printf("::: ToggleChPower \n");

@@ -28,7 +28,7 @@ void WriteToXML(const char *hvSysName, const int hvSysHandle, ushort NumSlots, u
 void ChangeParameter(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, float chNew, const char * parName);
 void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
 void AdjustChannelVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
-int AdjustCrateVoltage(const int hvSysHandle, const char * inFile);
+int AdjustCrateVoltage(const int hvSysHandle, const char * inFile, unsigned short NrOfSlots, unsigned short ChList[]);
 void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);
 void ToggleChPower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);
 void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short i, unsigned short j);
@@ -36,5 +36,20 @@ void ChangeChannelName(const int hvSysHandle, unsigned short slotNum, unsigned s
 int ChangeCrateName(const int hvSysHandle, const char * inFile);
 int CountFileLines(FILE * inFile);
 int CountFileColumns(FILE * inFile);
+
+typedef struct VoltageAdjustments{
+   char * chName;
+   int deltaV;
+   char * hostName;
+   struct VoltageAdjustments *next;
+} Voltages_t;
+
+typedef struct Names{
+   int slotNum;
+   int chNum;
+   char * parName;
+   char * hostName;
+   struct Names *next;
+} Names_t;
 
 #endif
