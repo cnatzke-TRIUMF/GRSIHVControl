@@ -88,18 +88,7 @@ echo ":::: $STATUS_OPTION VOLTAGES"
 
 # looping through hv crates
 for crate_file in "${crateNames[@]}"; do 
-   # TIGRESS doesn't like changing a whole crate at a time, 
-   # so we do each channel
-   if [[ ${crate_file}.txt == *"tig"* ]]; then 
-      readarray tig_rows < ${crate_file}.txt
-      for row in "${tig_rows[@]}"; do
-         row_array=(${row})
-         channel=${row_array[0]::-1}
-         deltaV=${row_array[1]}
-         echo "./GRSIHVControl $channel $deltaV -$OPTION ${crate_file}"
-         echo "rm ${crate_file}.txt"
-      done
-   elif [[ -s ${crate_file}.txt ]]; then 
+   if [[ -s ${crate_file}.txt ]]; then 
       echo "./GRSIHVControl ${crate_file}.txt -$OPTION ${crate_file}"
       echo "rm ${crate_file}.txt"
    else
