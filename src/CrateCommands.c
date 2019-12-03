@@ -370,8 +370,9 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
 //==============================================================================
 int AdjustCrateVoltage(const int hvSysHandle, const char * fileName, unsigned short NrOfSlots, unsigned short ChList[])
 {
-   Voltages_t *voltList;
-   Voltages_t *first = NULL; Voltages_t *last = NULL;
+   VoltageNode *first;     // Initial voltlist (contains junk)
+   VoltageNode *voltList;  // VoltageNode being filled 
+   VoltageNode *last;      // Previously filled VoltageNode
    char line[MAX_SIZE],chName[MAX_SIZE], hostName[MAX_SIZE];
    int deltaV;
 
@@ -387,6 +388,15 @@ int AdjustCrateVoltage(const int hvSysHandle, const char * fileName, unsigned sh
    // extracting hostName from fileName
    strcpy(hostName, fileName);
    hostName[strlen(hostName) - 4] = 0;
+
+   // allocate new node to hold data
+   first = malloc(sizeof(VoltageNode));
+   if (first == NULL) {
+      printf("Ran out of memory\n");
+      return 1;
+   }
+   last = first;
+   first->next = NULL;
 
    while (fgets(line, sizeof(line), inFile) != NULL){
       // safety Checks
@@ -407,13 +417,11 @@ int AdjustCrateVoltage(const int hvSysHandle, const char * fileName, unsigned sh
          return 1;
       }
 
-      // allocate new node to hold data
-      voltList = malloc(sizeof(voltList));
+      voltList = malloc(sizeof(VoltageNode));
       if (voltList == NULL) {
          printf("Ran out of memory\n");
          return 1;
       }
-
       voltList->chName = strdup(chName);
       voltList->deltaV = deltaV;
       voltList->hostName = strdup(hostName);
@@ -431,15 +439,16 @@ int AdjustCrateVoltage(const int hvSysHandle, const char * fileName, unsigned sh
 
    // output for debugging
    voltList = first;
+   voltList = voltList->next; //quick fix
    while (voltList != NULL){
-      printf("AdjustCrateVoltage(hvSysHandle, %s, %i, %s, NrOfSlots, NrOfChList)\n", 
-            voltList->chName, voltList->deltaV, voltList->hostName);
+      //printf("AdjustCrateVoltage(hvSysHandle, %s, %i, %s, NrOfSlots, NrOfChList)\n", 
+      //      voltList->chName, voltList->deltaV, voltList->hostName);
       AdjustChannelVoltage(hvSysHandle, voltList->hostName, voltList->chName, (float) voltList->deltaV, NrOfSlots, ChList);
-      //AdjustChannelVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
       voltList = voltList->next;
    }
 
    // Freeing memory
+   free(first);
    free(voltList);
 
    return 0;

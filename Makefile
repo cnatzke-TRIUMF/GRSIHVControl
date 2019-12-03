@@ -24,7 +24,7 @@ SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CPPFLAGS += -Iinclude
-CFLAGS   += -DUNIX -DLINUX -Wall
+CFLAGS   += -DUNIX -DLINUX -Wall -ggdb3
 LDFLAGS  +=
 LDLIBS   += -lcaenhvwrapper -lncurses -lpthread -ldl -lm
 

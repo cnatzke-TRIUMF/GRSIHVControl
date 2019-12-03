@@ -37,12 +37,13 @@ int ChangeCrateName(const int hvSysHandle, const char * inFile);
 int CountFileLines(FILE * inFile);
 int CountFileColumns(FILE * inFile);
 
-typedef struct VoltageAdjustments{
+struct voltage_node {
    char * chName;
    int deltaV;
    char * hostName;
-   struct VoltageAdjustments *next;
-} Voltages_t;
+   struct voltage_node* next;
+};
+typedef struct voltage_node VoltageNode;
 
 typedef struct Names{
    int slotNum;
