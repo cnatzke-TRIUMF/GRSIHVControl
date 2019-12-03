@@ -128,7 +128,9 @@ void ParseInputs(int argc, char *argv[])
                            printf("::: Done\n");
                         }
                         break;
-                     // Changes names of channels in crate
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // Changes names of channels in a crate
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      case 'n':
                         if(argc != 6 && argc != 4){
                            //printf("::: ChangeName\n");
@@ -146,7 +148,7 @@ void ParseInputs(int argc, char *argv[])
                            }
                            else {
                               //printf("\n::: Attempting to name channels\n");
-                              //ChangeChannelName(hvSysHandle, slotN, chanN, chanName);
+                              ChangeChannelName(hvSysHandle, slotN, chanN, chanName);
                               //printf("::: Done\n");
                            }
                         }

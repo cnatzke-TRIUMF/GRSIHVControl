@@ -32,6 +32,7 @@ elif [[ $# == 3 && $3 == "-s" ]]; then
    STATUS_OPTION="SETTING"
 elif [[ $# == 3 && $3 == "-s" ]]; then 
    echo "Setting Votages"
+   # exits for now. Will add later
    exit
 else
    echo "---------------------------------------------------"
@@ -78,7 +79,7 @@ for row in "${rows[@]}"; do
    array_position=${channel:3:2}
    crate=${crateMap[$array_position]}
    # creates file for each crate
-   echo "${row_array[0]},${row_array[1]}" >> ${crate}.txt
+   echo "${row_array[0]}, ${row_array[1]}" >> ${crate}.txt
 done 
 
 # CHANGING VOLTAGE VALUES
@@ -87,7 +88,18 @@ echo ":::: $STATUS_OPTION VOLTAGES"
 
 # looping through hv crates
 for crate_file in "${crateNames[@]}"; do 
-   if [[ -s ${crate_file}.txt ]]; then 
+   # TIGRESS doesn't like changing a whole crate at a time, 
+   # so we do each channel
+   if [[ ${crate_file}.txt == *"tig"* ]]; then 
+      readarray tig_rows < ${crate_file}.txt
+      for row in "${tig_rows[@]}"; do
+         row_array=(${row})
+         channel=${row_array[0]::-1}
+         deltaV=${row_array[1]}
+         echo "./GRSIHVControl $channel $deltaV -$OPTION ${crate_file}"
+         echo "rm ${crate_file}.txt"
+      done
+   elif [[ -s ${crate_file}.txt ]]; then 
       echo "./GRSIHVControl ${crate_file}.txt -$OPTION ${crate_file}"
       echo "rm ${crate_file}.txt"
    else

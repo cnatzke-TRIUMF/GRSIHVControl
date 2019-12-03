@@ -434,7 +434,7 @@ int AdjustCrateVoltage(const int hvSysHandle, const char * fileName, unsigned sh
    while (voltList != NULL){
       printf("AdjustCrateVoltage(hvSysHandle, %s, %i, %s, NrOfSlots, NrOfChList)\n", 
             voltList->chName, voltList->deltaV, voltList->hostName);
-      AdjustChannelVoltage(hvSysHandle, voltList->hostName, voltList->chName, voltList->deltaV, NrOfSlots, ChList);
+      AdjustChannelVoltage(hvSysHandle, voltList->hostName, voltList->chName, (float) voltList->deltaV, NrOfSlots, ChList);
       //AdjustChannelVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
       voltList = voltList->next;
    }
@@ -481,12 +481,13 @@ void AdjustChannelVoltage(const int hvSysHandle, const char* hvSysName, const ch
       return;
    }
 
-   returnCode = CAENHV_GetChParam(hvSysHandle, i, parName, 1, &j, (void *) &chValue);
+   returnCode = CAENHV_GetChParam(hvSysHandle, i, parName, 1, &j,(void*)&chValue);
    if(returnCode){
       fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
    }
 
    // Setting new voltage and setting lower limit of voltage
+   
    chNew += chValue;
    if(chNew < 600) chNew = 600;
 
