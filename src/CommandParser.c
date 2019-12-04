@@ -141,6 +141,30 @@ void ParseInputs(int argc, char *argv[])
                         }
                         break;
                      ///////////////////////////////////////////////////////////////////////////////////////
+                     // Toggles A/B channels for TIGRESS Suppressors
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     case 'g':
+                        if(argc != 4){
+                           //printf("::: ToggleTigChannels\n");
+                           printf("ERROR: 4 arguments needed, %i given\n\n", argc);
+                           printf("./GRSIHVControl <A/B> -g <host>\n\n");
+                           return;
+                        }
+                        if (argc == 4){ 
+                           char * bgo_file = NULL;
+                           char buf[100];
+                           chanType = argv[1];
+                           if (strcmp(chanType, "A") == 0) bgo_file = "BGO_B_";
+                           if (strcmp(chanType, "B") == 0) bgo_file = "BGO_A_";
+                           //printf("\n::: Attempting to toggle power of %s channels.\n", chanType);
+                           strcpy(buf, bgo_file);
+                           strcat(buf, hvSysName);
+                           strcat(buf, ".dat");
+                           ToggleTigChannels(hvSysHandle, hvSysName, buf, chanType, NrOfSlots, NrOfChList);
+                           //printf("::: Done\n");
+                        }
+                        break;
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      // Changes names of channels in a crate
                      ///////////////////////////////////////////////////////////////////////////////////////
                      case 'n':
@@ -169,30 +193,6 @@ void ParseInputs(int argc, char *argv[])
                            printf("\n::: Attempting to name channels using %s\n", inFile);
                            ChangeCrateName(hvSysHandle, inFile);
                            printf("::: Done\n");
-                        }
-                        break;
-                     ///////////////////////////////////////////////////////////////////////////////////////
-                     // Toggles A/B channels for TIGRESS Suppressors
-                     ///////////////////////////////////////////////////////////////////////////////////////
-                     case 'g':
-                        if(argc != 4){
-                           //printf("::: ToggleTigChannels\n");
-                           printf("ERROR: 4 arguments needed, %i given\n\n", argc);
-                           printf("./GRSIHVControl <A/B> -g <host>\n\n");
-                           return;
-                        }
-                        if (argc == 4){ 
-                           char * bgo_file = NULL;
-                           char buf[100];
-                           chanType = argv[1];
-                           if (strcmp(chanType, "A") == 0) bgo_file = "BGO_B_";
-                           if (strcmp(chanType, "B") == 0) bgo_file = "BGO_A_";
-                           //printf("\n::: Attempting to toggle power of %s channels.\n", chanType);
-                           strcpy(buf, bgo_file);
-                           strcat(buf, hvSysName);
-                           strcat(buf, ".dat");
-                           ToggleTigChannels(hvSysHandle, hvSysName, buf, chanType, NrOfSlots, NrOfChList);
-                           //printf("::: Done\n");
                         }
                         break;
 

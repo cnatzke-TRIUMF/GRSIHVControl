@@ -51,7 +51,7 @@ typedef struct Names{
    int slotNum;
    int chNum;
    char * parName;
-   char * hostName;
+   //char * hostName;
    struct Names *next;
 } Names_t;
 

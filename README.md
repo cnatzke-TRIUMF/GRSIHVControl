@@ -145,15 +145,16 @@ Alternatively, you can change the names of multiple channels at once using
 ````
 where `<name file>` is a tsv text file containing the channel name and voltage change in the form 
 ```
-slot1  channel1   name1    hostname1
-slot2  channel2   name2    hostname2
+slot1  channel1   name1
+slot2  channel2   name2
 ...
-slotN  channelN  nameN     hostnameN
+slotN  channelN  nameN 
 ```
 
 # Helper scripts
 The 'scripts' directory contains helper scripts to aid the user in utilizing
-the HV control program. 
+the HV control program. To use a script simply copy the script and the required
+arguments to the GRSIHVControl parent directory and run. 
 
 ### ChangeHV.sh
 This script updates/sets the voltages of the TIGRESS and GRIFFIN crates. 

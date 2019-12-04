@@ -3,7 +3,7 @@
 03 tighv00
 04 tighv00
 05 tighv00
-06 tighv01
+06 tighv00
 07 tighv01
 08 tighv01
 09 tighv01

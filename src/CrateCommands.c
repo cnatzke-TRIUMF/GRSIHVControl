@@ -714,11 +714,15 @@ int ToggleTigChannels(const int hvSysHandle, const char* hvSysName, const char *
             if (returnCode){
                fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
             }
+
             // write to XML file and zero channel voltage
             fprintf(outFile, "%s, %f \n", chName, chValue);
-            returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, (void *)&chNew);
-            if (returnCode){
-               fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+            // Only change channels ending in A/B
+            if(strcmp(chanType, "A") == 0 || strcmp(chanType, "B") == 0){
+               returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, (void *)&chNew);
+               if (returnCode){
+                  fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+               }
             }
          }
       }
@@ -845,7 +849,7 @@ int ChangeCrateName(const int hvSysHandle, const char * fileName)
    // count number of lines 
    //int total_rows = CountFileLines(inFile);
 
-   char line[MAX_SIZE], parName[MAX_SIZE], hostName[MAX_SIZE];
+   char line[MAX_SIZE], parName[MAX_SIZE];//, hostName[MAX_SIZE];
    int slotNum, chNum;
    Names_t *nameList;
 
@@ -863,7 +867,7 @@ int ChangeCrateName(const int hvSysHandle, const char * fileName)
       line[strlen (line)-1] = '\0';
 
       // scan fields
-      if (sscanf(line, "%i\t%i\t%s\t%s", &slotNum, &chNum, parName, hostName) != 4){
+      if (sscanf(line, "%i\t%i\t%s", &slotNum, &chNum, parName) != 3){
          printf("Line '%s' did not scan properly\n", line);
          return 1;
       }
@@ -878,7 +882,7 @@ int ChangeCrateName(const int hvSysHandle, const char * fileName)
       nameList->slotNum = slotNum;
       nameList->chNum = chNum;
       nameList->parName = strdup(parName);
-      nameList->hostName = strdup(hostName);
+      //nameList->hostName = strdup(hostName);
       nameList->next = NULL;
       if (first != NULL){
          last->next = nameList;
