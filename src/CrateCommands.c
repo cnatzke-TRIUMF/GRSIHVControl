@@ -309,11 +309,101 @@ void ChangeParameter(const int hvSysHandle, unsigned short slotNum, unsigned sho
 }
 
 //==============================================================================
-// ChangeVoltage
+// SetCrateVoltage
+//
+// Description - Sets the voltage of channels in a crate from a list
+//
+// @param hvSysHandle   The system handle
+// @param fileName      Path of file containing voltage information
+//==============================================================================
+int SetCrateVoltage(const int hvSysHandle, const char * hvSysName, const char * fileName, unsigned short NrOfSlots, unsigned short ChList[])
+{
+   VoltageNode *first;     // Initial voltlist (contains junk)
+   VoltageNode *voltList;  // VoltageNode being filled 
+   VoltageNode *last;      // Previously filled VoltageNode
+   char line[MAX_SIZE],chName[MAX_SIZE];
+   int deltaV;
+
+   FILE * inFile = fopen(fileName, "r");
+   if (inFile == NULL){
+      printf("Could not open file %s\n", fileName);
+      return 1;
+   }
+
+   //int total_rows = CountFileLines(inFile);
+   //printf("Found %i lines.\n", total_rows);
+
+   // allocate new node to hold data
+   first = malloc(sizeof(VoltageNode));
+   if (first == NULL) {
+      printf("Ran out of memory\n");
+      return 1;
+   }
+   last = first;
+   first->next = NULL;
+
+   while (fgets(line, sizeof(line), inFile) != NULL){
+      // safety Checks
+      if (line[0] == '\0'){
+         printf("Line too short\n");
+         return 1;
+      }
+      if (line[strlen (line)-1] != '\n'){
+         printf("Line starting with '%s' is too long\n", line);
+         return 1;
+      }
+
+      line[strlen(line)-1] = '\0';
+
+      // scan fields
+      if (sscanf(line, "%[^,],%i", chName, &deltaV) != 2){
+         printf("Line '%s' did not scan properly\n", line);
+         return 1;
+      }
+
+      voltList = malloc(sizeof(VoltageNode));
+      if (voltList == NULL) {
+         printf("Ran out of memory\n");
+         return 1;
+      }
+      voltList->chName = strdup(chName);
+      voltList->deltaV = deltaV;
+      voltList->hostName = strdup(hvSysName);
+      voltList->next = NULL;
+      if (first != NULL){
+         last->next = voltList;
+         last = voltList;
+      } else {
+         first = voltList;
+         last = voltList;
+      }
+   }
+
+   fclose(inFile);
+
+   // output for debugging
+   voltList = first;
+   voltList = voltList->next; //quick fix
+   while (voltList != NULL){
+      //printf("SetCrateVoltage(hvSysHandle, %s, %s, %i, NrOfSlots, NrOfChList)\n", 
+      //      voltList->hostName, voltList->chName, voltList->deltaV);
+      SetChannelVoltage(hvSysHandle, voltList->hostName, voltList->chName, (float) voltList->deltaV, NrOfSlots, ChList);
+      voltList = voltList->next;
+   }
+
+   // Freeing memory
+   free(first);
+   free(voltList);
+
+   return 0;
+} // end SetCrateVoltage
+
+//==============================================================================
+// SetChannelVoltage
 //
 // description - Changes voltage  of a single channel
 //==============================================================================
-void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[])
+void SetChannelVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[])
 {
    CAENHVRESULT returnCode; 
    char chName[12];
@@ -323,7 +413,6 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
    unsigned short j = 0;
    bool chFound = false;
 
-   printf("Passed voltage: %f\n", chNew);
    // varifying we can find the channel of interest
    for (i = 0; i < NrOfSlots; i++){
       for (j = 0; j < ChList[i]; j++){
@@ -358,7 +447,7 @@ void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * c
    }
    printf("%s Changed from %f to %f \n", parName, chValue, chNew);
 
-}
+} // SetChannelVoltage
 
 //==============================================================================
 // AdjustCrateVoltage
@@ -626,7 +715,7 @@ int ToggleTigChannels(const int hvSysHandle, const char* hvSysName, const char *
                fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
             }
             // write to XML file and zero channel voltage
-            fprintf(outFile, "%s \t %f \n", chName, chValue);
+            fprintf(outFile, "%s, %f \n", chName, chValue);
             returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, (void *)&chNew);
             if (returnCode){
                fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
@@ -638,10 +727,10 @@ int ToggleTigChannels(const int hvSysHandle, const char* hvSysName, const char *
    fclose(outFile);
 
    if(strcmp(chanType, "A") == 0){
-      printf("\nB Channel data written to: %s\n", fileName);
+      printf("\nSuppressor B Channel data written to: %s\n", fileName);
    }
    else if(strcmp(chanType, "B") == 0){
-      printf("\nA Channel data written to: %s\n", fileName);
+      printf("\nSuppressor A Channel data written to: %s\n", fileName);
    } else {
       printf("\nWARNING: channel type not found. Channel data written to: %s\n", fileName);
    }

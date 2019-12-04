@@ -26,7 +26,8 @@ void HVSystemLogin(const char * hvSysName, const char * userName, const char * p
 void HVSystemLogout(void);
 void WriteToXML(const char *hvSysName, const int hvSysHandle, ushort NumSlots, ushort ChannelsInSlot[], const char *filename);
 void ChangeParameter(const int hvSysHandle, unsigned short slotNum, unsigned short chNum, float chNew, const char * parName);
-void ChangeVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
+int SetCrateVoltage(const int hvSysHandle, const char* hvSysName, const char * inFile, unsigned short NrOfSlots, unsigned short ChList[]);
+void SetChannelVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
 void AdjustChannelVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
 int AdjustCrateVoltage(const int hvSysHandle, const char * inFile, unsigned short NrOfSlots, unsigned short ChList[]);
 void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);

@@ -57,12 +57,12 @@ void ParseInputs(int argc, char *argv[])
                         WriteToXML(hvSysName, System[sys_iter].Handle, NrOfSlots, NrOfChList, filename);
                         break;
                      ///////////////////////////////////////////////////////////////////////////////////////
-                     // Sets voltage for a channel
+                     // Sets voltage for a channel or crate
                      ///////////////////////////////////////////////////////////////////////////////////////
                      case 'v':
                         // Searches all channels for a specific name and
                         // changes the voltage Value
-                        if(argc != 5){
+                        if(argc != 5 && argc != 4){
                            printf("::: ChangeVoltage \n");
                            printf("ERROR: 5 arguments needed, %i given\n", argc);
                            return;
@@ -71,8 +71,12 @@ void ParseInputs(int argc, char *argv[])
                            chanName = argv[1];
                            chanV = atof(argv[2]);
                            printf("\n::: Attempting to set the voltage of channel %s.\n", chanName);
-                           ChangeVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
+                           SetChannelVoltage(hvSysHandle, hvSysName, chanName, (float)chanV, NrOfSlots, NrOfChList);
                            printf("::: Done\n");
+                        }
+                        if (argc == 4){
+                           inFile = argv[1];
+                           SetCrateVoltage(hvSysHandle, hvSysName, inFile, NrOfSlots, NrOfChList);
                         }
                         break;
                      ///////////////////////////////////////////////////////////////////////////////////////
