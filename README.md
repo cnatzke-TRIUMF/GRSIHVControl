@@ -17,6 +17,7 @@ command line. It uses the CAENHVWrapper library to interface with the crates.
     + [GenerateNameMap.sh](#generatenamemapsh)
 
 # Installation
+0. Install the [CAENHVWrapper library](https://www.caen.it/products/caen-hv-wrapper-library/).
 1. Get the code, either via tarball or from github
 ```
 git clone https://github.com/cnatzke/GRSIHVControl.git
