@@ -556,6 +556,106 @@ void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char *
 } // ToggleUpChannels
 
 //==============================================================================
+// ToggleTigChannels
+//
+// Description - Toggles A/B channels for TIGRESS. TIGRESS cannnot turn off
+// individual channels so an alternate method is used. 
+//
+// @param hvSysHandle   The system handle
+// @param hvSysName     The human readable system name
+// @param fileName      Output filename
+// @param chanType      A/B Channels 
+// @param NrOfSlots     Number of slots in crate 
+// @param ChList        List of channels in slot
+//==============================================================================
+int ToggleTigChannels(const int hvSysHandle, const char* hvSysName, const char * fileName, const char * chanType, unsigned short NrOfSlots, unsigned short ChList[])
+{
+   CAENHVRESULT returnCode;
+   FILE * outFile;
+   const char *parName = "V0Set";
+   char chName[12];
+   unsigned short i =0;
+   unsigned short j =0;
+   float chValue;
+   float chNew = 0;
+   float chDefault = 900;
+   const char * chType;
+   int len;
+   int changeCount = 0;
+
+   // opens output file for recording current voltage settings
+   outFile = fopen(fileName, "w");
+   if (outFile == NULL){
+      fprintf(stderr, "ERROR: Could not open/write file %s.dat", hvSysName);
+      return 1;
+   }
+
+   // varifying we can find the channel of interest
+   for (i = 0; i < NrOfSlots; i++){
+      if(ChList[i] < 13) continue; // Skipping HPGe channels
+      for (j = 0; j < ChList[i]; j++){
+         returnCode = CAENHV_GetChName(hvSysHandle, i, 1, &j, (char (*)[12]) chName);
+         if(returnCode){
+            fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+         }
+         // extract last character of channel name
+         len = strlen(chName);
+         chType = &chName[len - 1];
+
+         // change voltage 
+         if(strcmp(chanType, chType) == 0){
+            printf("Found %s in %s Slot %i Channel %i \n", chName, (char *) hvSysName, i, j);
+            returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, &chDefault);
+            if(returnCode){
+               fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+            }
+            printf("%s Changed to %f \n", parName, chDefault);
+            changeCount += 1;
+         }
+         // Read out parameter to file 
+         else { 
+            // Get channel name
+            returnCode = CAENHV_GetChName(hvSysHandle, i, 1, &j, (char (*)[12]) chName);
+            if (returnCode){
+               fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+            }
+            
+            // Get current voltage value
+            returnCode = CAENHV_GetChParam(hvSysHandle, i, parName, 1, &j, (void *)&chValue);
+            if (returnCode){
+               fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+            }
+            // write to XML file and zero channel voltage
+            fprintf(outFile, "%s \t %f \n", chName, chValue);
+            returnCode = CAENHV_SetChParam(hvSysHandle, i, parName, 1, &j, (void *)&chNew);
+            if (returnCode){
+               fprintf(stderr, "ERROR %#X: %s\n", returnCode, CAENHV_GetError(hvSysHandle));
+            }
+         }
+      }
+   }
+
+   fclose(outFile);
+
+   if(strcmp(chanType, "A") == 0){
+      printf("\nB Channel data written to: %s\n", fileName);
+   }
+   else if(strcmp(chanType, "B") == 0){
+      printf("\nA Channel data written to: %s\n", fileName);
+   } else {
+      printf("\nWARNING: channel type not found. Channel data written to: %s\n", fileName);
+   }
+
+   // if channels are not found
+   if (changeCount == 0){ 
+      printf("ERROR: %s channels not found in %s \n Are the channels named properly?\n", chanType, (char *) hvSysName);
+      return 1;
+   }
+
+   return 0;
+} // ToggleTigChannels
+
+//==============================================================================
 // ToggleChPower
 //
 // Description - Toggles the power of a single channel. 

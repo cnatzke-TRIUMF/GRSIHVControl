@@ -45,6 +45,9 @@ void ParseInputs(int argc, char *argv[])
                   option = *(argv[i] + j);
 
                   switch(option){
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // Writes crate info to XML file
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      case 'd':
                         //building filename
                         strcpy(filename, "./");
@@ -53,6 +56,9 @@ void ParseInputs(int argc, char *argv[])
                         // writing file
                         WriteToXML(hvSysName, System[sys_iter].Handle, NrOfSlots, NrOfChList, filename);
                         break;
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // Sets voltage for a channel
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      case 'v':
                         // Searches all channels for a specific name and
                         // changes the voltage Value
@@ -111,8 +117,9 @@ void ParseInputs(int argc, char *argv[])
                            printf("::: Done\n");
                         }
                         break;
-                     // Searches all channels for a specific type (A/B)
-                     // and toggles power
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // Toggles power of A/B channels in GRIFFIN
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      case 't':
                         if(argc != 5){
                            printf("::: ToggleUpChannels\n");
@@ -159,6 +166,34 @@ void ParseInputs(int argc, char *argv[])
                            printf("::: Done\n");
                         }
                         break;
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // Toggles A/B channels for TIGRESS Suppressors
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     case 'g':
+                        if(argc != 4){
+                           //printf("::: ToggleTigChannels\n");
+                           printf("ERROR: 4 arguments needed, %i given\n\n", argc);
+                           printf("./GRSIHVControl <A/B> -g <host>\n\n");
+                           return;
+                        }
+                        if (argc == 4){ 
+                           char * bgo_file = NULL;
+                           char buf[100];
+                           chanType = argv[1];
+                           if (strcmp(chanType, "A") == 0) bgo_file = "BGO_B_";
+                           if (strcmp(chanType, "B") == 0) bgo_file = "BGO_A_";
+                           //printf("\n::: Attempting to toggle power of %s channels.\n", chanType);
+                           strcpy(buf, bgo_file);
+                           strcat(buf, hvSysName);
+                           strcat(buf, ".dat");
+                           ToggleTigChannels(hvSysHandle, hvSysName, buf, chanType, NrOfSlots, NrOfChList);
+                           //printf("::: Done\n");
+                        }
+                        break;
+
+                     ///////////////////////////////////////////////////////////////////////////////////////
+                     // No argument given
+                     ///////////////////////////////////////////////////////////////////////////////////////
                      default: 
                         printf("Please pass an argument\n");
                   }
