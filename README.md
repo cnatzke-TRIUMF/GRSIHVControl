@@ -14,6 +14,7 @@ command line. It uses the CAENHVWrapper library to interface with the crates.
       - [Name Channels](#name-channels)
   * [Helper scripts](#helper-scripts)
     + [ChangeHV.sh](#changehvsh)
+    + [GenerateNameMap.sh](#generatenamemapsh)
 
 ## Installation
 1. Get the code, either via tarball or from github
@@ -167,7 +168,7 @@ Set voltages via
 ./ChangeHV.sh crateMap.txt HV_Change.txt -s
 ``` 
 
-**Note** You can enable an optional safety stop in the code by changing the variable 
+*Note* You can enable an optional safety stop in the code by changing the variable 
 ```
  SAFETYCHECK=false
 ``` 
