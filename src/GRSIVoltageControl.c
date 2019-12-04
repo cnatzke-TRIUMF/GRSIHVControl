@@ -13,8 +13,8 @@ HV System[MAX_HVPS];
 
 int main(int argc, char *argv[])
 {
-   char userName[20] = "admin";
-   char passwd[20] = "Kittygam";
+   char userName[20] = "";
+   char passwd[20] = "";
    char hvSysName[80];
    int ret;
 
