@@ -24,16 +24,6 @@ struct Property{
    }value;
 };
 
-typedef struct Names{
-   int slotNum;
-   int chNum;
-   char * parName;
-   char * hostName;
-   struct Names *next;
-} Names_t;
-
-
 extern HV System[];
-extern Names_t nameList;
 
 #endif

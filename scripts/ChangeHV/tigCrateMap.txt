@@ -1,0 +1,16 @@
+01 tighv00
+02 tighv00
+03 tighv00
+04 tighv00
+05 tighv00
+06 tighv01
+07 tighv01
+08 tighv01
+09 tighv01
+10 tighv01
+11 tighv01
+12 tighv02
+13 tighv02
+14 tighv02
+15 tighv02
+16 tighv02
