@@ -22,7 +22,7 @@ command line. It uses the CAENHVWrapper library to interface with the crates.
 ```
 git clone https://github.com/cnatzke/GRSIHVControl.git
 ```
-2. Add hostnames and host ip's to `src/CommandParser.c:68` and username/password to `src/GRSIHVControl.c:15`.
+2. Add hostnames and host ip's to `src/CrateCommands.c:68` and username/password to `src/GRSIHVControl.c:15`.
 3. Make the GRSIHVControl simply by running 'make' in the program directory
  ``` 
  cd GRSIHVControl
@@ -145,10 +145,10 @@ Alternatively, you can change the names of multiple channels at once using
 ````
 where `<name file>` is a tsv text file containing the channel name and voltage change in the form 
 ```
-slot1  channel1   name1
-slot2  channel2   name2
+slot1  channel1   name1    hostname1
+slot2  channel2   name2    hostname2
 ...
-slotN  channelN  nameN
+slotN  channelN  nameN     hostnameN
 ```
 
 # Helper scripts
