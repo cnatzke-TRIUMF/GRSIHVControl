@@ -154,8 +154,28 @@ The 'scripts' directory contains helper scripts to aid the user in utilizing
 the HV control program. 
 
 ### ChangeHV.sh
-This script updates/sets the voltages of the TIGRESS and GRIFFIN crates. It
-requires the user to specify which array they would like to change and the user
-must provide a text file detailing the channels and voltages. The name of these
-files can be changed by the user, but their default names are: 'hvMap.txt' and
-'hvChange.sh'. Examples for TIGRESS are provided in the scripts directory
+This script updates/sets the voltages of the TIGRESS and GRIFFIN crates. 
+
+Adjust voltages via 
+``` 
+./ChangeHV.sh crateMap.txt HV_Change.txt
+``` 
+in the `GRSIHVControl` parent directory where `<crateMap.txt>` is a text file mapping the crates to the positions they control. Examples for both TIGRESS (`tigCrateMap.txt`) and GRIFFIN (`grifCrateMap.txt`) are included in the directory. `HV_Change.txt` is the output file from Stephen's Bgo_fit function. 
+
+Set voltages via 
+``` 
+./ChangeHV.sh crateMap.txt HV_Change.txt -s
+``` 
+
+**Note** You can enable an optional safety stop in the code by changing the variable 
+```
+ SAFETYCHECK=false
+``` 
+to 
+```
+ SAFETYCHECK=true
+``` 
+at line 23 in the script.
+
+### GenerateNameMap.sh
+This script helps generate a text file containing the names for GRIFFIN channels for use in [Name Channels](#name-channels). It is still under construction and has some bugs. Use at your own risk.
