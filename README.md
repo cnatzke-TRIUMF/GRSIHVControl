@@ -16,7 +16,7 @@ command line. It uses the CAENHVWrapper library to interface with the crates.
     + [ChangeHV.sh](#changehvsh)
     + [GenerateNameMap.sh](#generatenamemapsh)
 
-## Installation
+# Installation
 1. Get the code, either via tarball or from github
 ```
 git clone https://github.com/cnatzke/GRSIHVControl.git
@@ -33,7 +33,7 @@ git clone https://github.com/cnatzke/GRSIHVControl.git
 ./GRSIHVControl <arguments> <option> <hostname>
 ```
 
-## Running GRSIHVControl
+# Running GRSIHVControl
 The general form of input is:
 ```
 ./GRSIHVControl <arguments> <option> <hostname>
@@ -150,19 +150,21 @@ slot2  channel2   name2
 slotN  channelN  nameN
 ```
 
-## Helper scripts
+# Helper scripts
 The 'scripts' directory contains helper scripts to aid the user in utilizing
 the HV control program. 
 
 ### ChangeHV.sh
 This script updates/sets the voltages of the TIGRESS and GRIFFIN crates. 
 
+##### Adjusting Voltages
 Adjust voltages via 
 ``` 
 ./ChangeHV.sh crateMap.txt HV_Change.txt
 ``` 
 in the `GRSIHVControl` parent directory where `<crateMap.txt>` is a text file mapping the crates to the positions they control. Examples for both TIGRESS (`tigCrateMap.txt`) and GRIFFIN (`grifCrateMap.txt`) are included in the directory. `HV_Change.txt` is the output file from Stephen's Bgo_fit function. 
 
+##### Setting Voltages
 Set voltages via 
 ``` 
 ./ChangeHV.sh crateMap.txt HV_Change.txt -s
