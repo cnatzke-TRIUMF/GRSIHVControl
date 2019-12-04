@@ -598,7 +598,7 @@ void AdjustChannelVoltage(const int hvSysHandle, const char* hvSysName, const ch
 } // end AdjustChannelVoltage
 
 //==============================================================================
-// ToggleChPower
+// ToggleGriffinChannels
 //
 // Description - Toggles the power of all A/B channels in GRIFFIN
 //
@@ -609,7 +609,7 @@ void AdjustChannelVoltage(const int hvSysHandle, const char* hvSysName, const ch
 // @param NrOfSlots     Number of slots in crate 
 // @param ChList        List of channels in slot
 //==============================================================================
-void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[])
+void ToggleGriffinChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[])
 {
    CAENHVRESULT returnCode;
    char chName[12];
@@ -642,7 +642,7 @@ void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char *
    if (changeCount == 0){ 
       printf("ERROR: %s channels not found in %s \n Are the channels named properly?\n", chanType, (char *) hvSysName);
    }
-} // ToggleUpChannels
+} // ToggleGriffinChannels
 
 //==============================================================================
 // ToggleTigChannels

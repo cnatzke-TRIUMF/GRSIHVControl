@@ -30,7 +30,7 @@ int SetCrateVoltage(const int hvSysHandle, const char* hvSysName, const char * i
 void SetChannelVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
 void AdjustChannelVoltage(const int hvSysHandle, const char * hvSysName, const char * chanName, float chNew, unsigned short NrOfSlots, unsigned short ChList[]);
 int AdjustCrateVoltage(const int hvSysHandle, const char * inFile, unsigned short NrOfSlots, unsigned short ChList[]);
-void ToggleUpChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);
+void ToggleGriffinChannels(const int hvSysHandle, const char* hvSysName, const char * chanType, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);
 int ToggleTigChannels(const int hvSysHandle, const char* hvSysName, const char * fileName, const char * chanType, unsigned short NrOfSlots, unsigned short ChList[]);
 void ToggleChPower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short NrOfSlots, unsigned short ChList[]);
 void TogglePower(const int hvSysHandle, const char* hvSysName, const char * chanName, unsigned state, unsigned short i, unsigned short j);

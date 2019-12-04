@@ -63,8 +63,9 @@ void ParseInputs(int argc, char *argv[])
                         // Searches all channels for a specific name and
                         // changes the voltage Value
                         if(argc != 5 && argc != 4){
-                           printf("::: ChangeVoltage \n");
-                           printf("ERROR: 5 arguments needed, %i given\n", argc);
+                           printf("ERROR: 5 arguments needed for setting individual channel, 4 needed for setting with file, %i given\n\n", argc);
+                           printf("./GRSIHVControl <name> <voltage change> -v <host>\n");
+                           printf("./GRSIHVControl <voltage file> -v <host>\n\n");
                            return;
                         }
                         if (argc == 5){
@@ -126,7 +127,7 @@ void ParseInputs(int argc, char *argv[])
                      ///////////////////////////////////////////////////////////////////////////////////////
                      case 't':
                         if(argc != 5){
-                           printf("::: ToggleUpChannels\n");
+                           printf("::: ToggleGriffinChannels\n");
                            printf("ERROR: 5 arguments needed, %i given\n\n", argc);
                            printf("./GRSIHVControl <A/B> <1/0> -t <host>\n\n");
                            return;
@@ -135,7 +136,7 @@ void ParseInputs(int argc, char *argv[])
                            chanType = argv[1];
                            state = atof(argv[2]);
                            printf("\n::: Attempting to toggle power of %s channels.\n", chanType);
-                           ToggleUpChannels(hvSysHandle, hvSysName, chanType, state, NrOfSlots, NrOfChList);
+                           ToggleGriffinChannels(hvSysHandle, hvSysName, chanType, state, NrOfSlots, NrOfChList);
                            printf("::: Done\n");
                         }
                         break;
