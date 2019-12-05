@@ -89,8 +89,10 @@ echo ":::: $STATUS_OPTION VOLTAGES"
 # looping through hv crates
 for crate_file in "${crateNames[@]}"; do 
    if [[ -s ${crate_file}.txt ]]; then 
-      echo "./GRSIHVControl ${crate_file}.txt -$OPTION ${crate_file}"
-      echo "rm ${crate_file}.txt"
+      #echo "./GRSIHVControl ${crate_file}.txt -$OPTION ${crate_file}"
+      #echo "rm ${crate_file}.txt"
+      ./GRSIHVControl ${crate_file}.txt -$OPTION ${crate_file}
+      rm ${crate_file}.txt
    else
       rm ${crate_file}.txt 
    fi
